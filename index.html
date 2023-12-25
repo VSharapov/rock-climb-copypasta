@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Week Copypasta Generator</title>
+    <script>
+        function updateCopypasta() {
+            const year = document.getElementById('year').value;
+            const week = document.getElementById('week').value;
+            const startDate = new Date(getStartDateFromWeek(year, week));
+            let copypasta = `poll question: @clamb\n`;
+            const days = ["Moon", "Tew's", "Woden's", "Thor's", "Freyja's", "Saturn", "Sun"];
+            const emojis = ["first_quarter_moon_with_face", "male_sign", "fast_forward", "zap", "female_sign", "ringed_planet", "sun_with_face"];
+
+            for (let i = 0; i < 7; i++) {
+                let date = new Date(startDate);
+                date.setDate(date.getDate() + i);
+                let formattedDate = date.toISOString().split('T')[0];
+                copypasta += `choice_${String.fromCharCode('a'.charCodeAt(0) + i)}::${emojis[i]}: ${formattedDate} ${days[i]} day\n`;
+            }
+            copypasta += `choice_h::x: Can't climb this week`;
+            document.getElementById('copypasta').value = copypasta;
+            document.getElementById('threadTitle').value = `clamb ${year}w${week}`;
+        }
+
+        function getStartDateFromWeek(year, week) {
+            let simple = new Date(year, 0, 1 + (week - 1) * 7);
+            let dow = simple.getDay();
+            let ISOweekStart = simple;
+            if (dow <= 4)
+                ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
+            else
+                ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
+            return ISOweekStart;
+        }
+
+        window.onload = function() {
+            let currentDate = new Date();
+            currentDate.setDate(currentDate.getDate() + 3);
+            let currentYear = currentDate.getFullYear();
+            let firstJan = new Date(currentYear, 0, 1);
+            let numberOfDays = Math.floor((currentDate - firstJan) / (24 * 60 * 60 * 1000));
+            let currentWeek = Math.ceil((currentDate.getDay() + 1 + numberOfDays) / 7);
+            document.getElementById('year').value = currentYear;
+            document.getElementById('week').value = currentWeek;
+            updateCopypasta();
+        };
+    </script>
+</head>
+<body>
+    <div>
+        Year: <input type="number" id="year" oninput="updateCopypasta()" />
+        Week: <input type="number" id="week" oninput="updateCopypasta()" min="1" max="53" />
+    </div>
+    <div>
+        Copypasta: <textarea id="copypasta" rows="10" cols="50"></textarea>
+    </div>
+    <div>
+        Thread Title: <input type="text" id="threadTitle" />
+    </div>
+</body>
+</html>
