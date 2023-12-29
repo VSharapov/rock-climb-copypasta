@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Week Copypasta Generator</title>
+    <title>Rock Climbing Copypasta Generator</title>
     <script>
         function updateCopypasta() {
             const year = document.getElementById('year').value;
@@ -19,7 +19,7 @@
             }
             copypasta += `choice_h::x: Can't climb this week`;
             document.getElementById('copypasta').value = copypasta;
-            document.getElementById('threadTitle').value = `clamb ${year}w${week}`;
+            document.getElementById('threadTitle').value = `clamb ${year}w${week.padStart(2, '0')}`;
         }
 
         function getStartDateFromWeek(year, week) {
