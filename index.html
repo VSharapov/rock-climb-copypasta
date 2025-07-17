@@ -25,6 +25,7 @@
             copypasta += `choice_h::x: Can't climb this week`;
             document.getElementById('copypasta').value = copypasta;
             document.getElementById('threadTitle').value = `clamb ${year}w${week.padStart(2, '0')}`;
+            updateClarification();
         }
 
         function getStartDateFromWeek(year, week) {
@@ -38,20 +39,40 @@
             return ISOweekStart;
         }
 
+        function getWeek(date) {
+            let firstJan = new Date(date.getFullYear(), 0, 1);
+            let numberOfDays = Math.floor((date - firstJan) / (24 * 60 * 60 * 1000));
+            let currentWeek = Math.ceil((date.getDay() + 1 + numberOfDays) / 7);
+            return currentWeek;
+        }
+
+        function updateClarification() {
+            const today = new Date();
+            const week = getWeek(today);
+            const year = today.getFullYear();
+            document.getElementById('today').innerHTML = today.toISOString().split('T')[0];
+            document.getElementById('current-week').innerHTML = `${year}w${String(week).padStart(2, '0')}`;
+        }
+
         window.onload = function() {
             let currentDate = new Date();
+            // It's more convenient to base the copypasta a few days ahead
+            // so if you use it late in the week you get the copypasta
+            // for the upcoming week, but if you forgot to do it, it defaults
+            // to the current week until Friday:
             currentDate.setDate(currentDate.getDate() + 3);
             let currentYear = currentDate.getFullYear();
             let firstJan = new Date(currentYear, 0, 1);
-            let numberOfDays = Math.floor((currentDate - firstJan) / (24 * 60 * 60 * 1000));
-            let currentWeek = Math.ceil((currentDate.getDay() + 1 + numberOfDays) / 7);
             document.getElementById('year').value = currentYear;
-            document.getElementById('week').value = currentWeek;
+            document.getElementById('week').value = getWeek(currentDate);
             updateCopypasta();
         };
     </script>
 </head>
 <body>
+    <div id="clarification">
+        Today (<span id="today"></span>) is <span id="current-week"></span>
+    </div>
     <div>
         Year: <input type="number" id="year" oninput="updateCopypasta()" />
         Week: <input type="number" id="week" oninput="updateCopypasta()" min="1" max="53" />
